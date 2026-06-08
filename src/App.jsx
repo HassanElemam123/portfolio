@@ -373,7 +373,7 @@ function App() {
         </div>
       </section>
 
-      <section id="about" className="mx-auto max-w-7xl px-5 py-24">
+      <section id="about" className="mx-auto max-w-7xl px-5 py-12">
         <SectionTitle
           label="About"
           title="A Front-End Developer who loves clean UI."
@@ -399,7 +399,7 @@ function App() {
         </div>
       </section>
 
-      <section id="skills" className="mx-auto max-w-7xl px-5 py-24">
+      <section id="skills" className="mx-auto max-w-7xl px-5 py-12">
         <SectionTitle
           label="Skills"
           title="Technical toolkit"
@@ -418,7 +418,7 @@ function App() {
         </div>
       </section>
 
-      <section id="projects" className="mx-auto max-w-7xl px-5 py-24">
+      <section id="projects" className="mx-auto max-w-7xl px-5 py-12">
         <SectionTitle
           label="Projects"
           title="Selected work"
@@ -492,7 +492,7 @@ function App() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-5 py-24">
+      <section className="mx-auto max-w-7xl px-5 py-12">
         <div className="grid gap-6 lg:grid-cols-2">
           <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-8 transition-all duration-300 ease-in-out">
             <p className="text-sm font-black uppercase tracking-[0.3em] text-cyan-300">
@@ -540,7 +540,7 @@ function App() {
         </div>
       </section>
 
-      <section id="contact" className="mx-auto max-w-7xl px-5 py-24">
+      <section id="contact" className="mx-auto max-w-7xl px-5 py-12">
         <div className="rounded-[40px] border border-white/10 bg-gradient-to-br from-cyan-400/10 via-slate-900 to-violet-500/10 p-8 text-center shadow-2xl shadow-cyan-500/10 sm:p-12">
           <p className="text-sm font-black uppercase tracking-[0.3em] text-cyan-300">
             Contact
