@@ -1,4 +1,20 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import {
+  FiMenu,
+  FiX,
+  FiExternalLink,
+  FiStar,
+  FiMonitor,
+  FiCode,
+  FiLayers,
+  FiGithub,
+  FiMail,
+  FiPhone,
+  FiDownload,
+  FiBriefcase,
+  FiZap,
+  FiMessageCircle,
+} from "react-icons/fi";
 
 const profile = {
   name: "Hassan El-Emam",
@@ -15,6 +31,13 @@ const profile = {
   summary:
     "Junior Front-End Developer focused on building responsive and user-friendly web interfaces using HTML5, CSS3, JavaScript, React, Vite, and Tailwind CSS.",
 };
+
+const navLinks = [
+  { label: "About", href: "#about" },
+  { label: "Skills", href: "#skills" },
+  { label: "Projects", href: "#projects" },
+  { label: "Contact", href: "#contact" },
+];
 
 const skills = [
   "HTML5",
@@ -81,6 +104,51 @@ const courses = [
 function App() {
   const [showProfile, setShowProfile] = useState(false);
   const [imageError, setImageError] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("about");
+
+  const closeMobileMenu = () => setMobileMenuOpen(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      let currentSection = "about";
+
+      navLinks.forEach((link) => {
+        const sectionId = link.href.replace("#", "");
+        const section = document.getElementById(sectionId);
+
+        if (section && window.scrollY >= section.offsetTop - 170) {
+          currentSection = sectionId;
+        }
+      });
+
+      setActiveSection(currentSection);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const getNavLinkClass = (href, isMobile = false) => {
+    const sectionId = href.replace("#", "");
+    const isActive = activeSection === sectionId;
+
+    if (isMobile) {
+      return `rounded-2xl border px-4 py-3 text-sm font-bold transition-all duration-300 ease-in-out ${
+        isActive
+          ? "border-cyan-400/50 bg-cyan-400/15 text-cyan-200 shadow-lg shadow-cyan-500/10"
+          : "border-white/10 bg-white/[0.04] text-slate-200 hover:border-cyan-400/40 hover:bg-cyan-400/10 hover:text-cyan-200"
+      }`;
+    }
+
+    return `relative transition-all duration-300 ease-in-out after:absolute after:-bottom-2 after:left-0 after:h-0.5 after:rounded-full after:bg-cyan-300 after:transition-all after:duration-300 ${
+      isActive
+        ? "text-cyan-300 after:w-full"
+        : "text-slate-300 after:w-0 hover:text-cyan-300 hover:after:w-full"
+    }`;
+  };
 
   return (
     <main className="min-h-screen overflow-hidden bg-slate-950 text-white">
@@ -90,12 +158,12 @@ function App() {
         <div className="absolute bottom-[-160px] left-1/2 h-96 w-96 -translate-x-1/2 rounded-full bg-blue-500/10 blur-3xl" />
       </div>
 
-      <header className="fixed left-0 top-0 z-40 w-full border-b border-white/10 bg-slate-950/75 backdrop-blur-xl">
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4">
-          <div className="flex items-center gap-3">
+      <header className="fixed left-0 top-0 z-40 w-full border-b border-white/10 bg-slate-950/80 backdrop-blur-xl">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-5 sm:py-4">
+          <div className="flex min-w-0 items-center gap-3">
             <button
               onClick={() => setShowProfile(true)}
-              className="group relative h-14 w-14 overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-500 ring-2 ring-cyan-400/40 shadow-lg shadow-cyan-500/20 transition hover:scale-105"
+              className="group relative h-12 w-12 shrink-0 overflow-hidden rounded-2xl bg-gradient-to-br from-cyan-400 to-violet-500 ring-2 ring-cyan-400/40 shadow-lg shadow-cyan-500/20 transition-all duration-300 ease-in-out hover:scale-105 sm:h-14 sm:w-14"
               title="Open profile"
             >
               {!imageError ? (
@@ -106,53 +174,100 @@ function App() {
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <span className="flex h-full w-full items-center justify-center text-lg font-black text-slate-950">
+                <span className="flex h-full w-full items-center justify-center text-base font-black text-slate-950 sm:text-lg">
                   HE
                 </span>
               )}
 
-              <span className="absolute inset-0 bg-slate-950/20 opacity-0 transition group-hover:opacity-100" />
+              <span className="absolute inset-0 bg-slate-950/20 opacity-0 transition-all duration-300 group-hover:opacity-100" />
             </button>
 
-            <div>
-              <h1 className="text-sm font-black sm:text-base">
+            <div className="min-w-0">
+              <h1 className="truncate text-xs font-black leading-tight sm:text-base">
                 {profile.name}
               </h1>
-              <p className="text-xs font-medium text-slate-400">
+              <p className="truncate text-[11px] font-medium leading-tight text-slate-400 sm:text-xs">
                 Front-End Developer
               </p>
             </div>
           </div>
 
-          <div className="hidden items-center gap-7 text-sm font-semibold text-slate-300 md:flex">
-            <a href="#about" className="transition hover:text-cyan-300">
-              About
-            </a>
-            <a href="#skills" className="transition hover:text-cyan-300">
-              Skills
-            </a>
-            <a href="#projects" className="transition hover:text-cyan-300">
-              Projects
-            </a>
-            <a href="#contact" className="transition hover:text-cyan-300">
-              Contact
-            </a>
+          <div className="hidden items-center gap-7 text-sm font-semibold md:flex">
+            {navLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                onClick={() => setActiveSection(link.href.replace("#", ""))}
+                className={getNavLinkClass(link.href)}
+              >
+                {link.label}
+              </a>
+            ))}
           </div>
 
-          <a
-            href={profile.cv}
-            download="Hassan_El-Emam_Front-End_Developer_CV.pdf"
-            className="rounded-full bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950 shadow-lg shadow-cyan-400/20 transition hover:-translate-y-1 hover:bg-cyan-300"
-          >
-            Download CV
-          </a>
+          <div className="flex shrink-0 items-center gap-2">
+            <a
+              href={profile.cv}
+              download="Hassan_El-Emam_Front-End_Developer_CV.pdf"
+              className="inline-flex items-center gap-2 rounded-full bg-cyan-400 px-4 py-2.5 text-xs font-bold text-slate-950 shadow-lg shadow-cyan-400/20 transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-cyan-300 sm:px-5 sm:py-3 sm:text-sm"
+            >
+              <FiDownload className="text-base" />
+              <span className="hidden sm:inline">Download</span>
+              <span>CV</span>
+            </a>
+
+            <button
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-white transition-all duration-300 ease-in-out hover:bg-white/10 md:hidden"
+              aria-label="Toggle mobile menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? (
+                <FiX className="text-2xl" />
+              ) : (
+                <FiMenu className="text-2xl" />
+              )}
+            </button>
+          </div>
         </nav>
+
+        {mobileMenuOpen && (
+          <div className="border-t border-white/10 bg-slate-950/95 px-4 py-4 shadow-2xl shadow-cyan-500/10 backdrop-blur-xl md:hidden">
+            <div className="mx-auto grid max-w-7xl gap-2">
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => {
+                    setActiveSection(link.href.replace("#", ""));
+                    closeMobileMenu();
+                  }}
+                  className={getNavLinkClass(link.href, true)}
+                >
+                  {link.label}
+                </a>
+              ))}
+
+              <a
+                href={profile.github}
+                target="_blank"
+                rel="noreferrer"
+                onClick={closeMobileMenu}
+                className="inline-flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm font-bold text-slate-200 transition-all duration-300 ease-in-out hover:border-cyan-400/40 hover:bg-cyan-400/10 hover:text-cyan-200"
+              >
+                <span>GitHub Profile</span>
+                <FiGithub />
+              </a>
+            </div>
+          </div>
+        )}
       </header>
 
-      <section className="relative mx-auto flex min-h-screen max-w-7xl items-center px-5 pb-20 pt-32">
+      <section className="relative mx-auto flex min-h-screen max-w-7xl items-center px-5 pb-20 pt-36 sm:pt-32">
         <div className="grid w-full items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]">
           <div>
-            <div className="mb-6 inline-flex rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-200">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cyan-400/25 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-200">
+              <FiBriefcase />
               Available for Front-End Opportunities
             </div>
 
@@ -172,23 +287,27 @@ function App() {
             <div className="mt-9 flex flex-wrap gap-4">
               <a
                 href="#projects"
-                className="rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-8 py-4 text-sm font-black text-white shadow-xl shadow-cyan-500/20 transition hover:-translate-y-1"
+                className="rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 px-8 py-4 text-sm font-black text-white shadow-xl shadow-cyan-500/20 transition-all duration-300 ease-in-out hover:-translate-y-1"
               >
                 View Projects
               </a>
 
               <a
                 href="#contact"
-                className="rounded-full border border-white/15 bg-white/5 px-8 py-4 text-sm font-black text-white transition hover:-translate-y-1 hover:bg-white/10"
+                className="rounded-full border border-white/15 bg-white/5 px-8 py-4 text-sm font-black text-white transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/10"
               >
                 Contact Me
               </a>
             </div>
 
-            <div className="mt-10 grid max-w-xl grid-cols-3 gap-4">
+            <div className="mt-10 grid max-w-xl grid-cols-2 gap-4 sm:grid-cols-3">
               <Stat number="2+" label="Live Projects" />
               <Stat number="15+" label="Skills" />
-              <Stat number="100%" label="Responsive" />
+              <Stat
+                number="100%"
+                label="Responsive"
+                className="col-span-2 sm:col-span-1"
+              />
             </div>
           </div>
 
@@ -200,7 +319,7 @@ function App() {
                 <div className="flex items-center gap-4">
                   <button
                     onClick={() => setShowProfile(true)}
-                    className="h-20 w-20 overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-400 to-violet-500 ring-2 ring-cyan-400/40 transition hover:scale-105"
+                    className="h-20 w-20 overflow-hidden rounded-3xl bg-gradient-to-br from-cyan-400 to-violet-500 ring-2 ring-cyan-400/40 transition-all duration-300 ease-in-out hover:scale-105"
                   >
                     {!imageError ? (
                       <img
@@ -226,14 +345,17 @@ function App() {
 
                 <div className="mt-8 space-y-4">
                   <InfoCard
+                    Icon={FiCode}
                     title="Focus"
                     text="React, Vite, Tailwind, UI Components"
                   />
                   <InfoCard
+                    Icon={FiZap}
                     title="Strength"
                     text="Clean Code, Debugging, Responsive Design"
                   />
                   <InfoCard
+                    Icon={FiLayers}
                     title="Workflow"
                     text="Git, GitHub, API Integration"
                   />
@@ -260,14 +382,17 @@ function App() {
 
         <div className="mt-12 grid gap-6 lg:grid-cols-3">
           <FeatureCard
+            Icon={FiMonitor}
             title="Responsive Interfaces"
             text="Creating layouts that look good on mobile, tablet, and desktop using Flexbox, CSS Grid, Tailwind, and Bootstrap."
           />
           <FeatureCard
+            Icon={FiCode}
             title="React Components"
             text="Building reusable, organized, and scalable React components with clean state management and routing."
           />
           <FeatureCard
+            Icon={FiLayers}
             title="Forms & APIs"
             text="Working with form validation, API-driven interfaces, notifications, and browser DevTools debugging."
           />
@@ -285,7 +410,7 @@ function App() {
           {skills.map((skill) => (
             <span
               key={skill}
-              className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-bold text-slate-200 transition hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-cyan-400/10 hover:text-cyan-200"
+              className="rounded-full border border-white/10 bg-white/[0.05] px-5 py-3 text-sm font-bold text-slate-200 transition-all duration-300 ease-in-out hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-cyan-400/10 hover:text-cyan-200"
             >
               {skill}
             </span>
@@ -304,7 +429,7 @@ function App() {
           {projects.map((project) => (
             <article
               key={project.title}
-              className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-7 shadow-xl shadow-slate-950/20 transition hover:-translate-y-2 hover:border-cyan-400/40 hover:bg-white/[0.07]"
+              className="group rounded-[32px] border border-white/10 bg-white/[0.04] p-7 shadow-xl shadow-slate-950/20 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-cyan-400/40 hover:bg-white/[0.07]"
             >
               <div className="mb-6 h-48 rounded-[26px] border border-white/10 bg-gradient-to-br from-cyan-400/20 via-blue-500/10 to-violet-500/20 p-5">
                 <div className="flex h-full flex-col justify-between rounded-[22px] bg-slate-950/60 p-5">
@@ -346,18 +471,20 @@ function App() {
                   href={project.live}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-full bg-cyan-400 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-cyan-300"
+                  className="inline-flex items-center gap-2 rounded-full bg-cyan-400 px-5 py-3 text-sm font-black text-slate-950 transition-all duration-300 ease-in-out hover:bg-cyan-300"
                 >
                   Live Demo
+                  <FiExternalLink />
                 </a>
 
                 <a
                   href={project.github}
                   target="_blank"
                   rel="noreferrer"
-                  className="rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white transition hover:bg-white/10"
+                  className="inline-flex items-center gap-2 rounded-full border border-white/10 px-5 py-3 text-sm font-black text-white transition-all duration-300 ease-in-out hover:bg-white/10"
                 >
                   GitHub
+                  <FiGithub />
                 </a>
               </div>
             </article>
@@ -367,7 +494,7 @@ function App() {
 
       <section className="mx-auto max-w-7xl px-5 py-24">
         <div className="grid gap-6 lg:grid-cols-2">
-          <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-8">
+          <div className="rounded-[32px] border border-white/10 bg-white/[0.04] p-8 transition-all duration-300 ease-in-out">
             <p className="text-sm font-black uppercase tracking-[0.3em] text-cyan-300">
               Training
             </p>
@@ -431,8 +558,9 @@ function App() {
           <div className="mt-10 flex flex-wrap justify-center gap-4">
             <a
               href={`mailto:${profile.email}`}
-              className="rounded-full bg-cyan-400 px-7 py-4 text-sm font-black text-slate-950 transition hover:-translate-y-1 hover:bg-cyan-300"
+              className="inline-flex items-center gap-2 rounded-full bg-cyan-400 px-7 py-4 text-sm font-black text-slate-950 transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-cyan-300"
             >
+              <FiMail />
               Send Email
             </a>
 
@@ -440,20 +568,23 @@ function App() {
               href={profile.github}
               target="_blank"
               rel="noreferrer"
-              className="rounded-full border border-white/10 px-7 py-4 text-sm font-black text-white transition hover:-translate-y-1 hover:bg-white/10"
+              className="inline-flex items-center gap-2 rounded-full border border-white/10 px-7 py-4 text-sm font-black text-white transition-all duration-300 ease-in-out hover:-translate-y-1 hover:bg-white/10"
             >
+              <FiGithub />
               GitHub Profile
             </a>
           </div>
 
           <div className="mt-10 grid gap-4 text-left md:grid-cols-3">
             <ContactCard
+              Icon={FiMail}
               title="Email"
               value={profile.email}
               href={`mailto:${profile.email}`}
             />
 
             <ContactCard
+              Icon={FiMessageCircle}
               title="WhatsApp"
               value={profile.phone1}
               href={profile.whatsapp}
@@ -461,6 +592,7 @@ function App() {
             />
 
             <ContactCard
+              Icon={FiPhone}
               title="Phone"
               value={profile.phone2}
               href={profile.phoneLink}
@@ -479,10 +611,10 @@ function App() {
           <div className="relative w-full max-w-sm rounded-3xl border border-white/10 bg-slate-900 p-6 text-center shadow-2xl shadow-cyan-500/20">
             <button
               onClick={() => setShowProfile(false)}
-              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-xl font-bold text-white transition hover:bg-white/20"
+              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white transition-all duration-300 ease-in-out hover:bg-white/20"
               aria-label="Close profile"
             >
-              ×
+              <FiX className="text-xl" />
             </button>
 
             <div className="mx-auto h-28 w-28 overflow-hidden rounded-full bg-gradient-to-br from-cyan-400 to-violet-500 ring-4 ring-cyan-400/40">
@@ -518,15 +650,16 @@ function App() {
                 href={profile.github}
                 target="_blank"
                 rel="noreferrer"
-                className="rounded-full bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950 transition hover:bg-cyan-300"
+                className="inline-flex items-center gap-2 rounded-full bg-cyan-400 px-5 py-3 text-sm font-bold text-slate-950 transition-all duration-300 ease-in-out hover:bg-cyan-300"
               >
+                <FiGithub />
                 GitHub
               </a>
 
               <a
                 href="#contact"
                 onClick={() => setShowProfile(false)}
-                className="rounded-full border border-white/10 px-5 py-3 text-sm font-bold text-white transition hover:bg-white/10"
+                className="rounded-full border border-white/10 px-5 py-3 text-sm font-bold text-white transition-all duration-300 ease-in-out hover:bg-white/10"
               >
                 Contact
               </a>
@@ -552,29 +685,39 @@ function SectionTitle({ label, title, text }) {
   );
 }
 
-function Stat({ number, label }) {
+function Stat({ number, label, className = "" }) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
+    <div
+      className={`rounded-3xl border border-white/10 bg-white/[0.04] p-5 ${className}`}
+    >
       <p className="text-3xl font-black text-cyan-300">{number}</p>
       <p className="mt-1 text-sm font-semibold text-slate-400">{label}</p>
     </div>
   );
 }
 
-function InfoCard({ title, text }) {
+function InfoCard({ Icon, title, text }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-5">
-      <p className="text-sm font-black text-white">{title}</p>
-      <p className="mt-2 text-sm text-slate-400">{text}</p>
+    <div className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-5">
+      {Icon && (
+        <span className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300">
+          <Icon className="text-lg" />
+        </span>
+      )}
+
+      <div>
+        <p className="text-sm font-black text-white">{title}</p>
+        <p className="mt-2 text-sm text-slate-400">{text}</p>
+      </div>
     </div>
   );
 }
 
-function FeatureCard({ title, text }) {
+function FeatureCard({ Icon, title, text }) {
   return (
-    <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-7 transition hover:-translate-y-2 hover:border-cyan-400/40 hover:bg-white/[0.07]">
-      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-400/10 text-xl">
-        ✦
+    <div className="rounded-[28px] border border-white/10 bg-white/[0.04] p-7 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-cyan-400/40 hover:bg-white/[0.07]">
+      <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-cyan-400/10 text-cyan-300">
+        {Icon ? <Icon className="text-xl" /> : <FiStar className="text-xl" />}
       </div>
       <h3 className="text-xl font-black">{title}</h3>
       <p className="mt-4 leading-7 text-slate-300">{text}</p>
@@ -582,28 +725,36 @@ function FeatureCard({ title, text }) {
   );
 }
 
-function ContactCard({ title, value, href, external = false }) {
+function ContactCard({ Icon, title, value, href, external = false }) {
   return (
     <a
       href={href}
       target={external ? "_blank" : undefined}
       rel={external ? "noreferrer" : undefined}
-      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 p-5 transition hover:-translate-y-2 hover:border-cyan-400/40 hover:bg-white/[0.07] hover:shadow-xl hover:shadow-cyan-500/10"
+      className="group relative overflow-hidden rounded-2xl border border-white/10 bg-slate-950/40 p-5 transition-all duration-300 ease-in-out hover:-translate-y-2 hover:border-cyan-400/40 hover:bg-white/[0.07] hover:shadow-xl hover:shadow-cyan-500/10"
     >
-      <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 to-violet-500/10 opacity-0 transition group-hover:opacity-100" />
+      <div className="absolute inset-0 bg-gradient-to-br from-cyan-400/10 to-violet-500/10 opacity-0 transition-all duration-300 group-hover:opacity-100" />
 
       <div className="relative z-10">
         <div className="flex items-center justify-between gap-4">
-          <p className="text-sm font-black text-cyan-300 transition group-hover:text-cyan-200">
-            {title}
-          </p>
+          <div className="flex items-center gap-3">
+            {Icon && (
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-300">
+                <Icon />
+              </span>
+            )}
 
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-300 opacity-0 transition group-hover:opacity-100">
-            ↗
+            <p className="text-sm font-black text-cyan-300 transition-all duration-300 group-hover:text-cyan-200">
+              {title}
+            </p>
+          </div>
+
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-400/10 text-cyan-300 opacity-0 transition-all duration-300 group-hover:opacity-100">
+            <FiExternalLink />
           </span>
         </div>
 
-        <p className="mt-2 break-words text-sm font-semibold text-slate-200 transition group-hover:text-white">
+        <p className="mt-3 break-words text-sm font-semibold text-slate-200 transition-all duration-300 group-hover:text-white">
           {value}
         </p>
       </div>
